@@ -25,12 +25,10 @@ class SecurityConfig(private val authenticationProvider: AuthenticationProvider)
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("swagger-ui/**", "/v3/api-docs/**")
+                    .requestMatchers("swagger-ui/**", "/api/v3/api-docs/**")
                     .permitAll()
-                    .requestMatchers("/api/auth/**", "/api-docs")
+                    .requestMatchers("/api/auth/**")
                     .permitAll()
-//                    .requestMatchers(HttpMethod.POST, "/api/users")
-//                    .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/courses")
                     .hasRole(UserType.Instructor.toString())
                     .anyRequest()

@@ -13,8 +13,8 @@ class SwaggerConfig {
             .info(
                 Info()
                     .version("v0.1")
-                    .title("weolbu 과제")
-                    .description("API DOC")
+                    .title("weolbu-bada")
+                    .description("월급쟁이 부자들 과제 API 문서입니다.")
             )
     }
 }
