@@ -9,11 +9,12 @@ data class RefreshToken(
     @MapsId
     @JoinColumn(name = "user_id")
     val user: User,
-    @Id
-    val userId: Long? = null,
     private var refreshToken: String,
 //    private var reissueCount: Int = 0
 ) {
+    @Id
+    val userId: Long? = null
+
     fun updateRefreshToken(refreshToken: String) {
         this.refreshToken = refreshToken
     }

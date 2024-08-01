@@ -21,7 +21,7 @@ class JwtAuthenticationFilter(
         filterChain: FilterChain
     ) {
         val authHeader: String? = request.getHeader("Authorization")
-        if (authHeader.notContainBearerToken()) {
+        if (authHeader.isBearerToken()) {
             filterChain.doFilter(request, response)
             return
         }
@@ -31,17 +31,18 @@ class JwtAuthenticationFilter(
         // SecurityContextHolder.getContext().authentication == null -> 다중 인증 방지
         if (email != null && SecurityContextHolder.getContext().authentication == null) {
             val foundUser = userDetailsService.loadUserByUsername(email)
-            if (jwtProvider.validate(jwtToken))
+            if (jwtProvider.validate(jwtToken, TokenType.AccessToken))
                 setAuthentication(foundUser, request)
             filterChain.doFilter(request, response)
         }
     }
-    private fun String?.notContainBearerToken() =
+
+    private fun String?.isBearerToken() =
         this == null || !this.startsWith("Bearer ")
-    
+
     private fun String.extractToken() =
         this.substringAfter("Bearer ")
-    
+
     private fun setAuthentication(foundUser: UserDetails, request: HttpServletRequest) {
         val authToken = UsernamePasswordAuthenticationToken(foundUser, null, foundUser.authorities)
         authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
