@@ -1,6 +1,5 @@
-package com.bada.weolbu.auth.model
+package com.bada.weolbu.entity
 
-import com.bada.weolbu.user.model.User
 import jakarta.persistence.*
 
 @Entity
@@ -9,7 +8,7 @@ data class RefreshToken(
     @MapsId
     @JoinColumn(name = "user_id")
     val user: User,
-    private var refreshToken: String,
+    var refreshToken: String,
 //    private var reissueCount: Int = 0
 ) {
     @Id

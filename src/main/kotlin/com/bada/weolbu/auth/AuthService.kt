@@ -1,50 +1,43 @@
 package com.bada.weolbu.auth
 
-import com.bada.weolbu.auth.model.RefreshToken
+import com.bada.weolbu.entity.RefreshToken
 import com.bada.weolbu.auth.model.SignInResponseDTO
 import com.bada.weolbu.auth.model.SignupRequest
+import com.bada.weolbu.common.exception.DuplicateUserException
 import com.bada.weolbu.common.exception.InvalidRefreshTokenException
 import com.bada.weolbu.common.exception.UserNotFoundException
-import com.bada.weolbu.user.UserRepository
-import com.bada.weolbu.user.model.User
+import com.bada.weolbu.entity.RefreshTokenRepository
+import com.bada.weolbu.entity.UserRepository
+import com.bada.weolbu.entity.User
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.stereotype.Component
-import java.rmi.ServerException
 
 @Component
 class AuthService(
     private val authManager: AuthenticationManager,
     private val userRepository: UserRepository,
-    private val userDetailsService: CustomUserDetailsService,
     private val refreshTokenRepository: RefreshTokenRepository,
     private val jwtProvider: JwtProvider
 ) {
-    fun signup(signupRequest: SignupRequest): SignInResponseDTO {
+    fun signup(signupRequest: SignupRequest) {
         val user = User(
-            username = signupRequest.username,
+            name = signupRequest.name,
             password = this.hashPassword(signupRequest.password),
             email = signupRequest.email,
-            type = signupRequest.type,
+            role = signupRequest.type,
             phoneNumber = signupRequest.phoneNumber
         )
-        userRepository.save(user)
-
-        val accessToken = createAccessToken(user)
-        val refreshToken = createRefreshToken(user)
-        val entity = RefreshToken(
-            user = user,
-            refreshToken = refreshToken,
-        )
-        refreshTokenRepository.save(entity)
-        return SignInResponseDTO(
-            accessToken = accessToken,
-            refreshToken = refreshToken,
-        )
+        try {
+            userRepository.save(user)
+        } catch (e: DataIntegrityViolationException) {
+            throw DuplicateUserException(signupRequest.email)
+        }
     }
 
-    fun signin(email: String, password: String): SignInResponseDTO {
+    fun signIn(email: String, password: String): SignInResponseDTO {
         authManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 email,
@@ -52,14 +45,9 @@ class AuthService(
             )
         )
         val user = userRepository.findByEmail(email) ?: throw UserNotFoundException()
-        //        val user = userDetailsService.loadUserByUsername(email)
         val accessToken = createAccessToken(user)
         val refreshToken = createRefreshToken(user)
-        val entity = RefreshToken(
-            user = user,
-            refreshToken = refreshToken,
-        )
-        refreshTokenRepository.save(entity)
+        upsertRefreshToken(user, refreshToken)
         return SignInResponseDTO(
             accessToken = accessToken,
             refreshToken = refreshToken,
@@ -68,16 +56,13 @@ class AuthService(
 
     fun refresh(token: String): SignInResponseDTO {
         if (!jwtProvider.validate(token, TokenType.RefreshToken))
-            throw ServerException("Invalid refresh token")
+            throw InvalidRefreshTokenException()
 
         val claims = jwtProvider.getClaims(token)
         val email = claims["email"].toString()
-        val optionalToken = refreshTokenRepository.findByRefreshToken(token)
-        val refreshToken = optionalToken.orElseThrow {
-            InvalidRefreshTokenException()
-        }
-        if (refreshToken.user.email != email)
-            throw ServerException("Invalid refresh token")
+        val refreshToken = refreshTokenRepository.findByRefreshToken(token)
+            ?.takeIf { it.user.email == email }
+            ?: throw InvalidRefreshTokenException()
 
         val accessToken = createAccessToken(refreshToken.user)
         return SignInResponseDTO(
@@ -87,9 +72,21 @@ class AuthService(
 
     }
 
-    private fun hashPassword(password: String): String {
-        return BCrypt.hashpw(password, BCrypt.gensalt())
+    fun upsertRefreshToken(user: User, newRefreshToken: String) {
+        val existingToken = refreshTokenRepository.findByUser(user)
+        existingToken?.let {
+            it.refreshToken = newRefreshToken
+            refreshTokenRepository.save(it)
+        } ?: {
+            val newTokenEntity = RefreshToken(
+                user = user,
+                refreshToken = newRefreshToken
+            )
+            refreshTokenRepository.save(newTokenEntity)
+        }
     }
+
+    private fun hashPassword(password: String): String = BCrypt.hashpw(password, BCrypt.gensalt())
 
     private fun createAccessToken(user: User) = jwtProvider.generate(user, TokenType.AccessToken)
 

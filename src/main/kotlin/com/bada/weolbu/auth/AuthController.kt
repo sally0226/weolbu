@@ -15,13 +15,13 @@ class AuthController(
     private val authService: AuthService,
 ) {
     @PostMapping("/signup")
-    fun signup(@RequestBody body: SignupRequest): SignInResponseDTO {
+    fun signup(@RequestBody body: SignupRequest) {
         return authService.signup(body)
     }
 
     @PostMapping("/signIn")
     fun signIn(@RequestBody body: SignInDTO): SignInResponseDTO {
-        return authService.signin(body.email, body.password)
+        return authService.signIn(body.email, body.password)
     }
 
     @PostMapping("/refresh")

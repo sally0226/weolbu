@@ -1,21 +1,21 @@
 package com.bada.weolbu.auth.model
 
-import com.bada.weolbu.user.model.User
-import com.bada.weolbu.user.model.UserType
+import com.bada.weolbu.entity.User
+import com.bada.weolbu.entity.UserRole
 
 data class SignupRequest(
 //    @field:NotNull(message = "Please provide a username")
-    val username: String,
+    val name: String,
     val phoneNumber: String,
     val email: String,
-    val type: UserType,
+    val type: UserRole,
     val password: String,
 ) {
     fun toUser() = User(
-        username = username,
+        name = name,
         phoneNumber = phoneNumber,
         email = email,
-        type = type,
+        role = type,
         password = password
     )
 }

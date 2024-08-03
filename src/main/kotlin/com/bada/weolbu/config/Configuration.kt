@@ -2,7 +2,7 @@ package com.bada.weolbu.config
 
 import com.bada.weolbu.auth.CustomUserDetailsService
 import com.bada.weolbu.auth.JwtProperties
-import com.bada.weolbu.user.UserRepository
+import com.bada.weolbu.entity.UserRepository
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -31,6 +31,7 @@ class Configuration {
                 it.setUserDetailsService(userDetailsService(userRepository))
                 it.setPasswordEncoder(encoder())
             }
+
     @Bean
     fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager =
         config.authenticationManager

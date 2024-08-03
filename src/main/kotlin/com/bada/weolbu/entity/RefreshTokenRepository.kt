@@ -1,11 +1,11 @@
-package com.bada.weolbu.auth
+package com.bada.weolbu.entity
 
-import com.bada.weolbu.auth.model.RefreshToken
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
 interface RefreshTokenRepository : CrudRepository<RefreshToken, Long> {
-    fun findByRefreshToken(refreshToken: String): Optional<RefreshToken>
+    fun findByUser(user: User): RefreshToken?
+    fun findByRefreshToken(refreshToken: String): RefreshToken?
 }

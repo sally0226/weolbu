@@ -1,7 +1,8 @@
 package com.bada.weolbu.config
 
+import com.bada.weolbu.auth.JwtAuthenticationEntryPoint
 import com.bada.weolbu.auth.JwtAuthenticationFilter
-import com.bada.weolbu.user.model.UserType
+import com.bada.weolbu.entity.UserRole
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -23,6 +24,7 @@ class SecurityConfig(private val authenticationProvider: AuthenticationProvider)
     ): DefaultSecurityFilterChain {
         http
             .csrf { it.disable() }
+            .exceptionHandling { e -> e.authenticationEntryPoint(JwtAuthenticationEntryPoint()) }
             .authorizeHttpRequests {
                 it
                     .requestMatchers("swagger-ui/**", "/api/v3/api-docs/**")
@@ -30,7 +32,7 @@ class SecurityConfig(private val authenticationProvider: AuthenticationProvider)
                     .requestMatchers("/api/auth/**")
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/courses")
-                    .hasRole(UserType.Instructor.toString())
+                    .hasRole(UserRole.Instructor.toString())
                     .anyRequest()
                     .fullyAuthenticated()
             }

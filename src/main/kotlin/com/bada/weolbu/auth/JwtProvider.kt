@@ -1,6 +1,6 @@
 package com.bada.weolbu.auth
 
-import com.bada.weolbu.user.model.User
+import com.bada.weolbu.entity.User
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
