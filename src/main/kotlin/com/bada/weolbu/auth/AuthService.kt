@@ -2,8 +2,9 @@ package com.bada.weolbu.auth
 
 import com.bada.weolbu.entity.RefreshToken
 import com.bada.weolbu.auth.model.SignInResponseDTO
-import com.bada.weolbu.auth.model.SignupRequest
+import com.bada.weolbu.auth.model.SignupRequestDTO
 import com.bada.weolbu.common.exception.DuplicateUserException
+import com.bada.weolbu.common.exception.InvalidPasswordException
 import com.bada.weolbu.common.exception.InvalidRefreshTokenException
 import com.bada.weolbu.common.exception.UserNotFoundException
 import com.bada.weolbu.entity.RefreshTokenRepository
@@ -22,18 +23,21 @@ class AuthService(
     private val refreshTokenRepository: RefreshTokenRepository,
     private val jwtProvider: JwtProvider
 ) {
-    fun signup(signupRequest: SignupRequest) {
+    fun signup(param: SignupRequestDTO) {
+        if (!isValidatePassword(param.password))
+            throw InvalidPasswordException()
+
         val user = User(
-            name = signupRequest.name,
-            password = this.hashPassword(signupRequest.password),
-            email = signupRequest.email,
-            role = signupRequest.type,
-            phoneNumber = signupRequest.phoneNumber
+            name = param.name,
+            password = this.hashPassword(param.password),
+            email = param.email,
+            role = param.type,
+            phoneNumber = param.phoneNumber
         )
         try {
             userRepository.save(user)
         } catch (e: DataIntegrityViolationException) {
-            throw DuplicateUserException(signupRequest.email)
+            throw DuplicateUserException(param.email)
         }
     }
 
@@ -91,4 +95,15 @@ class AuthService(
     private fun createAccessToken(user: User) = jwtProvider.generate(user, TokenType.AccessToken)
 
     private fun createRefreshToken(user: User) = jwtProvider.generate(user, TokenType.RefreshToken)
+
+    fun isValidatePassword(password: String): Boolean {
+        val hasUppercase = password.any { it.isUpperCase() }
+        val hasLowercase = password.any { it.isLowerCase() }
+        val hasDigit = password.any { it.isDigit() }
+
+        val criteriaMet = listOf(hasUppercase, hasLowercase, hasDigit).count { it }
+
+        return criteriaMet >= 2
+    }
+
 }
