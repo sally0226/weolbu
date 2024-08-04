@@ -25,7 +25,8 @@ JVM:          21.0.4 (Oracle Corporation 21.0.4+8-LTS-274)
 
 ## API 문서
 
-서버 실행 후 `http://localhost:8080/swagger-ui/index.html` 접속
+1. 서버 실행 후 `http://localhost:8080/swagger-ui/index.html` 접속
+2. [api-docs.json](./docs/api-docs.json)
 
 ## 구현 내용
 

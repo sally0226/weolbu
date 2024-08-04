@@ -1,0 +1,567 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "weolbu-bada",
+    "description": "월급쟁이 부자들 과제 API 문서입니다.",
+    "version": "v0.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api/users/courses": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "수강신청된 강의 목록",
+        "operationId": "getCourses",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RegisteredCourseResponseDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+            ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "여러 강의에 대해 수강신청",
+        "operationId": "registerCourse",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterCoursesRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RegisteredCourseResponseDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+            ]
+          }
+        ]
+      }
+    },
+    "/api/courses": {
+      "get": {
+        "tags": [
+          "course-controller"
+        ],
+        "summary": "모든 강좌 조회",
+        "description": "정렬 : {컬럼이름},{asc or desc} \n - 예시 : \n    - 최근등록순: \"createdDateTime,desc\"\n    - 신청률높은순: \"currentEnrollmentPercent,desc\"\n    - 신청자많은순: \"currentEnrollment,desc\" \ndefault page size : 20",
+        "operationId": "getCourses_1",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCoursesResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+            ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "course-controller"
+        ],
+        "summary": "강의 생성 (강사만 가능)",
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCourseDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+            ]
+          }
+        ]
+      }
+    },
+    "/api/auth/signup": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "operationId": "signup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/signIn": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "operationId": "signIn",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignInRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignInResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "operationId": "refreshAccessToken",
+        "parameters": [
+          {
+            "name": "Refresh-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignInResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/courses/{courseId}": {
+      "get": {
+        "tags": [
+          "course-controller"
+        ],
+        "summary": "강좌 단건 조회",
+        "operationId": "getCourse",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegisterCoursesRequestDTO": {
+        "required": [
+          "courseIds"
+        ],
+        "type": "object",
+        "properties": {
+          "courseIds": {
+            "maxItems": 50,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "CourseResponseDTO": {
+        "required": [
+          "capacity",
+          "category",
+          "createdDateTime",
+          "currentEnrollment",
+          "price",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentEnrollment": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ORIGINAL",
+              "REAL_ESTATE",
+              "FINANCE",
+              "COACHING",
+              "BOOK_CLUB"
+            ]
+          },
+          "price": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "instructor": {
+            "$ref": "#/components/schemas/UserResponseDTO"
+          }
+        }
+      },
+      "RegisteredCourseResponseDTO": {
+        "required": [
+          "course",
+          "createdDateTime"
+        ],
+        "type": "object",
+        "properties": {
+          "course": {
+            "$ref": "#/components/schemas/CourseResponseDTO"
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UserResponseDTO": {
+        "required": [
+          "createdDateTime",
+          "email",
+          "name",
+          "phoneNumber",
+          "role"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "INSTRUCTOR",
+              "STUDENT"
+            ]
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateDateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateCourseDTO": {
+        "required": [
+          "capacity",
+          "category",
+          "price",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "capacity": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "price": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ORIGINAL",
+              "REAL_ESTATE",
+              "FINANCE",
+              "COACHING",
+              "BOOK_CLUB"
+            ]
+          }
+        }
+      },
+      "SignupRequestDTO": {
+        "required": [
+          "email",
+          "name",
+          "password",
+          "phoneNumber",
+          "role"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "pattern": "^010-\\d{4}-\\d{4}$",
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "INSTRUCTOR",
+              "STUDENT"
+            ]
+          },
+          "password": {
+            "maxLength": 10,
+            "minLength": 6,
+            "type": "string"
+          }
+        }
+      },
+      "SignInRequestDTO": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "SignInResponseDTO": {
+        "required": [
+          "accessToken",
+          "refreshToken"
+        ],
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          }
+        }
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "GetCoursesResponseDTO": {
+        "required": [
+          "courses",
+          "pageNo",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "courses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CourseResponseDTO"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
