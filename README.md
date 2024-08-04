@@ -38,8 +38,11 @@ JVM:          21.0.4 (Oracle Corporation 21.0.4+8-LTS-274)
 
 ### 구현 API 목록
 
+API의 input에 대해 validation 적용
+
 - 인증
     - 회원가입 API
+        - email에 대해 unique 적용
     - 로그인 API
     - 토큰 리프레시 API
 - 유저
