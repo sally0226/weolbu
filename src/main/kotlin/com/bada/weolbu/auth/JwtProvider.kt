@@ -26,15 +26,13 @@ class JwtProvider(private val properties: JwtProperties) {
     private val accessTokenSecretKey = Keys.hmacShaKeyFor(properties.accessTokenSecret.toByteArray())
     private val refreshTokenSecretKey = Keys.hmacShaKeyFor(properties.refreshTokenSecret.toByteArray())
     fun generate(user: User, type: TokenType): String {
-        val expiration = when {
-            type == TokenType.AccessToken -> properties.accessTokenExpiration
-            type == TokenType.RefreshToken -> properties.refreshTokenExpiration
-            else -> throw ServerException("Invalid JWT token type")
+        val expiration = when (type) {
+            TokenType.AccessToken -> properties.accessTokenExpiration
+            TokenType.RefreshToken -> properties.refreshTokenExpiration
         }
-        val secretKey = when {
-            type == TokenType.AccessToken -> accessTokenSecretKey
-            type == TokenType.RefreshToken -> refreshTokenSecretKey
-            else -> throw ServerException("Invalid JWT token type")
+        val secretKey = when (type) {
+            TokenType.AccessToken -> accessTokenSecretKey
+            TokenType.RefreshToken -> refreshTokenSecretKey
         }
         return Jwts.builder()
             .claims()
