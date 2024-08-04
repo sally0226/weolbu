@@ -13,27 +13,33 @@ data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
+
     val name: String,
+
     @Column(unique = true, nullable = false)
     val email: String,
+
     private val password: String,
+
     @Enumerated(EnumType.STRING)
     val role: UserRole,
+
     val createdDateTime: OffsetDateTime = OffsetDateTime.now(),
+
     val updateDateTime: OffsetDateTime? = null,
+
     val phoneNumber: String,
 
-    // TODO: cascade type 지정 필요
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     val courses: List<UserCourse> = mutableListOf(),
 ) : UserDetails {
     fun toResponseDTO(): UserResponseDTO {
         return UserResponseDTO(
             id = id,
-            username = name,
+            name = name,
             phoneNumber = phoneNumber,
             email = email,
-            type = role,
+            role = role,
             createdDateTime = createdDateTime,
             updateDateTime = updateDateTime,
         )
@@ -48,5 +54,5 @@ data class User(
 }
 
 enum class UserRole {
-    Instructor, Student
+    INSTRUCTOR, STUDENT
 }

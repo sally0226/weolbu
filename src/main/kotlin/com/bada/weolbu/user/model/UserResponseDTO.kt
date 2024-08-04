@@ -5,10 +5,10 @@ import java.time.OffsetDateTime
 
 data class UserResponseDTO(
     val id: Long?,
-    val username: String,
+    val name: String,
     val phoneNumber: String,
     val email: String,
-    val type: UserRole,
+    val role: UserRole,
     val createdDateTime: OffsetDateTime,
     val updateDateTime: OffsetDateTime?
 )

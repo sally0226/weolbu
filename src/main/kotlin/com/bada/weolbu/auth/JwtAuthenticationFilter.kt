@@ -27,9 +27,9 @@ class JwtAuthenticationFilter(
         }
         val jwtToken = authHeader!!.extractToken()
         val claims = jwtProvider.getClaims(jwtToken)
-        val email = claims.get("email").toString()
+        val email = claims["email"].toString()
         // SecurityContextHolder.getContext().authentication == null -> 다중 인증 방지
-        if (email != null && SecurityContextHolder.getContext().authentication == null) {
+        if (SecurityContextHolder.getContext().authentication == null) {
             val foundUser = userDetailsService.loadUserByUsername(email)
             if (jwtProvider.validate(jwtToken, TokenType.AccessToken))
                 setAuthentication(foundUser, request)

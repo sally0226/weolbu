@@ -31,7 +31,7 @@ class AuthService(
             name = param.name,
             password = this.hashPassword(param.password),
             email = param.email,
-            role = param.type,
+            role = param.role,
             phoneNumber = param.phoneNumber
         )
         try {
@@ -48,7 +48,7 @@ class AuthService(
                 password
             )
         )
-        val user = userRepository.findByEmail(email) ?: throw UserNotFoundException()
+        val user = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val accessToken = createAccessToken(user)
         val refreshToken = createRefreshToken(user)
         upsertRefreshToken(user, refreshToken)

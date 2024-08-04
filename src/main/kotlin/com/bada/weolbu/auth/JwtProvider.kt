@@ -61,7 +61,7 @@ class JwtProvider(private val properties: JwtProperties) {
         } catch (e: SecurityException) {
             e.printStackTrace()
         } catch (e: ExpiredJwtException) {
-            return false
+            e.printStackTrace()
         } catch (e: UnsupportedJwtException) {
             e.printStackTrace()
         } catch (e: IllegalArgumentException) {

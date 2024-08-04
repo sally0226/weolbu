@@ -32,7 +32,7 @@ class SecurityConfig(private val authenticationProvider: AuthenticationProvider)
                     .requestMatchers("/api/auth/**")
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/courses")
-                    .hasRole(UserRole.Instructor.toString())
+                    .hasRole(UserRole.INSTRUCTOR.toString())
                     .anyRequest()
                     .fullyAuthenticated()
             }

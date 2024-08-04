@@ -1,0 +1,36 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  spring:
+    profiles:
+      active: test
+
+  datasource:
+    url: jdbc:h2:file:./weolbu-test
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        SQL: debug
+
+security:
+  jwt:
+    refresh-token-secret: bf016d49441a17f8712ac5d3d6ae0e3141705926c681a1a2f600b2e185162b207c05d646db18f54b8c2b42bc39658c9aa6722fe0c4238b6e1f0d217b44a05460
+    access-token-secret: 8a2ce5f41aed2b2076f9c855fdfac8090760d91f3339b1fd8ed7159badd99eb611d599e6fcdc84067d593c8814fe36cce937602c61355a89e7f0c7577e65be98
+    access-token-expiration: 60000
+    refresh-token-expiration: 3600000

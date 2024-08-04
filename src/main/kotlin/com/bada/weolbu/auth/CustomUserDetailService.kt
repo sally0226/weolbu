@@ -11,5 +11,5 @@ class CustomUserDetailsService(
     private val userRepository: UserRepository
 ) : UserDetailsService {
     override fun loadUserByUsername(email: String): UserDetails =
-        userRepository.findByEmail(email)?.let { it } ?: throw UserNotFoundException()
+        userRepository.findByEmail(email)?.let { it } ?: throw UserNotFoundException(email)
 }

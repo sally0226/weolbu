@@ -29,20 +29,21 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")
     implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     runtimeOnly("com.h2database:h2")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.kotest:kotest-runner-junit5:4.4.3")
+    testImplementation("io.kotest:kotest-assertions-core:4.4.3")
+    testImplementation("io.kotest:kotest-extensions-spring:4.4.3")
+    testImplementation("io.mockk:mockk:1.12.0")
 }
 
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
